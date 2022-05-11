@@ -2,10 +2,15 @@
 
 class Local{
     private $productosEnVenta;
+    private $productosImportados;
+    private $productosRegionales;
+    private $colVentasHechas;
 
-    public function __construct($productos)
+    public function __construct($productos, $importados, $regionales)
     {
         $this->productosEnVenta = $productos;
+        $this->productosImportados = $importados;
+        $this->productosRegionales = $regionales;
     }
 
     public function getProductosEnVenta(){
@@ -16,6 +21,29 @@ class Local{
         $this->productosEnVenta = $productosEnVenta;
     }
 
+    public function getProductosImportados(){
+        return $this->productosImportados;
+    }
+
+    public function setProductosImportados($productosImportados){
+        $this->productosImportados = $productosImportados;
+    }
+
+    public function getProductosRegionales(){
+        return $this->productosRegionales;
+    }
+
+    public function setProductosRegionales($productosRegionales){
+        $this->productosRegionales = $productosRegionales;
+    }
+
+    public function getColVentasHechas(){
+        return $this->colVentasHechas;
+    }
+
+    public function setColVentasHechas($colVentasHechas){
+        $this->colVentasHechas = $colVentasHechas;
+    }
     /** incorporates a new product if it is not in the store
      * @param $objProducto
      * @return bool
@@ -77,4 +105,81 @@ class Local{
         return $totalCosto;
     }
 
+    /** Returns the most economical product of an item
+    *  @param string $rubro 
+    *  @return object
+    */
+    public function productoMasEconomico($rubro){
+        $productos = $this->getProductosEnVenta();
+        $n = count($productos);
+        $proMasBarato = null;
+        $precio = 99999;
+        for($i = 0; $i < $n; $i++){
+            if($productos[$i]->getRefRubro() == $rubro){
+                $precioProducto = $productos[$i]->darPrecioVenta();
+                if($precioProducto <= $precio){
+                    $precio = $precioProducto;
+                    $proMasBarato = $productos[$i];
+                }
+            }
+        }
+        return $proMasBarato;
+    }
+
+    /** Returns the n best-selling products in the year
+     * @param int $anio
+     * @param int $n La cantidad de productos mas vendidos que queremos ver
+     * @return array
+     */
+
+   /*  public function informarProductosMasVendidos($anio, $n){
+        $productosEnLocal = $this->getProductosEnVenta();
+        $e = count($productosEnLocal);
+        $ventas = $this->getColVentasHechas();
+        $d = count($ventas);
+        for($i = 0; $i < $d; $i++){
+            $fecha = $ventas[$i]->getFecha();
+            $anioCompra = date("Y", $fecha);
+            if($anioCompra == $anio){
+                $productosComprados = $ventas[$i]->getRefProductos();
+                $p = count($productosComprados);
+                for($a = 0; $a < $p; $a++){
+                    for($u = 0; $u < $e; $u++){
+                        if($productosComprados[$a]->getCodigoBarra() == $productosEnLocal[$u]->getCodigoBarra()){
+
+                        }
+                    }
+                    
+                }
+            }
+        }
+    } */
+
+    /** Returns the average sales of imported products made
+     * @return float
+     */
+
+    public function promedioVentasImportados(){
+        $importados = $this->getProductosImportados();
+        $s = count($importados);
+        $ventas = $this->getColVentasHechas();
+        $d = count($ventas);
+        $totalProductosVendidos = 0;
+        $importadosComprados = 0;
+        for($i = 0; $i < $d; $i++){
+            $productosVendidos = count($ventas[$i]->getRefProductos());
+            $totalProductosVendidos += $productosVendidos;
+            for($e = 0; $e < $productosVendidos; $e++){
+                for($r = 0; $r < $s; $r++){
+                    if($productosVendidos[$e] == $importados[$s]){
+                        $importadosComprados += 1;
+                    }
+                }
+            }
+        }
+        $promedio = ($importadosComprados * 100) / $totalProductosVendidos;
+        return $promedio;
+    }
 }
+
+    
