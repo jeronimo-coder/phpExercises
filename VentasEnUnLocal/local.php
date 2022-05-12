@@ -180,6 +180,26 @@ class Local{
         $promedio = ($importadosComprados * 100) / $totalProductosVendidos;
         return $promedio;
     }
+
+    /** returns all the products that were
+     *  purchased by the person identified
+     *  with the typeDoc and numDoc received by parameter
+     * @param string $tipoDoc
+     * @param int $numDoc
+     * @return array
+     */
+    public function informarConsumoCliente($tipoDoc, $numDoc){
+        $ventas = $this->getColVentasHechas();
+        $n = count($ventas);
+        $productosCompradosXCliente = [];
+        for($i = 0; $i < $n; $i++){
+            if($tipoDoc == $ventas[$i]->getCliente()->getTipoDoc()
+            && $numDoc == $ventas[$i]->getCliente()->getNumDoc()){
+                array_push($productosCompradosXCliente, $ventas[$i]);
+            }
+        }
+        return $productosCompradosXCliente;
+    }
 }
 
     
